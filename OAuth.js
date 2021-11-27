@@ -5,6 +5,10 @@ import { authorize, prefetchConfiguration, refresh, revoke } from 'react-native-
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Button, ButtonContainer, Form, FormLabel, FormValue, Heading, Page } from './components';
 
+// https://developer.okta.com/blog/2018/03/16/build-react-native-authentication-oauth-2
+// https://stackoverflow.com/questions/52177668/android-build-error-androidmanifest-xml-requires-a-placeholder-substitution
+https://www.freecodecamp.org/news/how-to-set-up-react-native-authentication-with-react-native-app-auth-f6fd66e0e6d0/
+
 const configs = {
     identityserver: {
         issuer: 'https://demo.identityserver.io',
