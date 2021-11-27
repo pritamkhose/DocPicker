@@ -136,6 +136,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        // place correct redirectScheme~
+        manifestPlaceholders = [appAuthRedirectScheme: 'com.docpicker']
     }
     splits {
         abi {
