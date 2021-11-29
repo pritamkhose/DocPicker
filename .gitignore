@@ -58,3 +58,8 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+# test
+__snapshots__/
+*.js.snap
+coverage/
