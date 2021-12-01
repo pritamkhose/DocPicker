@@ -64,3 +64,4 @@ __snapshots__/
 *.js.snap
 coverage/
 test-report.html
+report.html

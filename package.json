@@ -9,6 +9,7 @@
     "test": "jest",
     "test-coverage": "jest --verbose --coverage --updateSnapshot",
     "lint": "eslint .",
+    "lint-report": "eslint node_modules/eslint-html-reporter/reporter.js -o report.html",
     "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.3",
     "eslint": "7.14.0",
+    "eslint-html-reporter": "^0.7.4",
     "jest": "^26.6.3",
     "jest-html-reporter": "^3.4.1",
     "metro-react-native-babel-preset": "^0.66.2",
@@ -31,8 +33,12 @@
   },
   "jest": {
     "preset": "react-native",
-    "collectCoverage" : true,
-    "coverageReporters": ["lcov"],
-    "reporters": ["./node_modules/jest-html-reporter"]
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "reporters": [
+      "./node_modules/jest-html-reporter"
+    ]
   }
 }
