@@ -63,3 +63,4 @@ buck-out/
 __snapshots__/
 *.js.snap
 coverage/
+test-report.html

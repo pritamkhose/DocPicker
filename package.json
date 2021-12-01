@@ -6,8 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest --verbose --coverage --updateSnapshot",
-    "test-coverage": "jest --coverage",
+    "test": "jest",
+    "test-coverage": "jest --verbose --coverage --updateSnapshot",
     "lint": "eslint .",
     "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html"
   },
@@ -30,6 +30,9 @@
     "react-test-renderer": "17.0.2"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "collectCoverage" : true,
+    "coverageReporters": ["lcov"],
+    "reporters": ["./node_modules/jest-html-reporter"]
   }
 }
