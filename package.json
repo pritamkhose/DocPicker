@@ -7,11 +7,18 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "android:staging": "react-native run-android --variant=stagingdebug",
+    "android:staging-release": "react-native run-android --variant=stagingrelease",
+    "android:dev": "react-native run-android --variant=developmentdebug",
+    "android:dev-release": "react-native run-android --variant=developmentrelease",
+    "android:prod": "react-native run-android --variant=productiondebug",
+    "android:prod-release": "react-native run-android --variant=productionrelease"
   },
   "dependencies": {
     "react": "17.0.2",
     "react-native": "0.66.3",
+    "react-native-config": "^1.4.5",
     "react-native-document-picker": "^7.1.1",
     "react-native-file-viewer": "^2.1.4",
     "react-native-fs": "^2.18.0"
