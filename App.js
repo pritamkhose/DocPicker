@@ -1,20 +1,33 @@
 // Import React and required components
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-  Alert, Button, Image, Linking, PermissionsAndroid, SafeAreaView,
+  Alert,
+  Button,
+  Image,
+  Linking,
+  PermissionsAndroid,
+  SafeAreaView,
   ScrollView,
   StatusBar,
-  StyleSheet, Text, TouchableOpacity, useColorScheme, View
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
-import FileViewer from "react-native-file-viewer";
+import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
+// https://stackoverflow.com/questions/52621531/couldnt-find-preset-modulereact-native-dotenv
+// https://github.com/goatandsheep/react-native-dotenv
+// https://stackoverflow.com/questions/33117227/setting-environment-variable-in-react-native
+
+import {API_URL, APP_ENV} from '@env';
 
 const App = () => {
+  console.log('API_URL >> ', API_URL, APP_ENV);
   const isDarkMode = useColorScheme() === 'dark';
 
   const [singleFile, setSingleFile] = useState('');
@@ -42,12 +55,9 @@ const App = () => {
       //Setting the state to show single file attributes
       setSingleFile(res);
 
-
-      RNFS.readFile(res[0].uri, 'base64')
-        .then(data => {
-          console.log('File Data srting : ' + data);
-        });
-
+      RNFS.readFile(res[0].uri, 'base64').then(data => {
+        console.log('File Data srting : ' + data);
+      });
     } catch (err) {
       //Handling any exception (If any)
       if (DocumentPicker.isCancel(err)) {
@@ -97,27 +107,27 @@ const App = () => {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         {
-          title: "Storage Permission",
+          title: 'Storage Permission',
           message:
-            "App needs read access to your storage " +
-            "so you can take awesome upload.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
+            'App needs read access to your storage ' +
+            'so you can take awesome upload.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the storage");
-        setPermission(true)
+        console.log('You can use the storage');
+        setPermission(true);
       } else {
-        console.log("Camera permission denied");
+        console.log('Camera permission denied');
       }
     } catch (err) {
       console.warn(err);
     }
   };
 
-  const handlePress = async (url) => {
+  const handlePress = async url => {
     // Checking if the link is supported for links with custom URL scheme.
     const supported = await Linking.canOpenURL(url);
 
@@ -130,17 +140,15 @@ const App = () => {
     }
   };
 
-  const filePreview = async (path) => {
-    console.log('file Preview path : ', path)
-    FileViewer.open(path, { showOpenWithDialog: true })
-      .then(await FileViewer.open(path)
-      )
+  const filePreview = async path => {
+    console.log('file Preview path : ', path);
+    FileViewer.open(path, {showOpenWithDialog: true})
+      .then(await FileViewer.open(path))
       .catch(error => {
         // error
         Alert.alert(`Not able preview file open this URL: ${path}`);
       });
   };
-
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -156,13 +164,13 @@ const App = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Text style={styles.sectionTitle}>
-            File Picker in React Native
-          </Text>
+          <Text style={styles.sectionTitle}>File Picker in React Native</Text>
 
           <TouchableOpacity
             activeOpacity={0.5}
-            onPress={() => handlePress('https://aboutreact.com/file-picker-in-react-native/')}>
+            onPress={() =>
+              handlePress('https://aboutreact.com/file-picker-in-react-native/')
+            }>
             <Text style={styles.titleText}>
               https://aboutreact.com/file-picker-in-react-native/
             </Text>
@@ -170,7 +178,11 @@ const App = () => {
 
           <TouchableOpacity
             activeOpacity={0.5}
-            onPress={() => handlePress('https://stackoverflow.com/questions/34908009/react-native-convert-image-url-to-base64-string')}>
+            onPress={() =>
+              handlePress(
+                'https://stackoverflow.com/questions/34908009/react-native-convert-image-url-to-base64-string',
+              )
+            }>
             <Text style={styles.titleText}>
               https://stackoverflow.com/questions/34908009/react-native-convert-image-url-to-base64-string
             </Text>
@@ -179,18 +191,21 @@ const App = () => {
             style={{
               backgroundColor: 'grey',
               height: 2,
-              margin: 10
-            }} />
+              margin: 10,
+            }}
+          />
           <Button
-            style={{ margin: 10 }}
+            style={{margin: 10}}
             title="request permissions"
-            onPress={requestStoragePermission} />
+            onPress={requestStoragePermission}
+          />
           <View
             style={{
               backgroundColor: 'grey',
               height: 2,
-              margin: 10
-            }} />
+              margin: 10,
+            }}
+          />
           <View style={styles.container}>
             {/*To show single file attribute*/}
             <TouchableOpacity
@@ -198,7 +213,7 @@ const App = () => {
               style={styles.buttonStyle}
               onPress={selectOneFile}>
               {/*Single file selection button*/}
-              <Text style={{ margin: 10, fontSize: 19 }}>
+              <Text style={{margin: 10, fontSize: 19}}>
                 Click here to pick one file
               </Text>
               <Image
@@ -209,9 +224,13 @@ const App = () => {
               />
             </TouchableOpacity>
             {/*Showing the data of selected Single file*/}
-            {singleFile && singleFile.length > 0 !== null ?
+            {singleFile && singleFile.length > 0 !== null ? (
               <>
-                <Text style={[styles.textStyle, { color: isDarkMode ? 'white' : 'black' }]}>
+                <Text
+                  style={[
+                    styles.textStyle,
+                    {color: isDarkMode ? 'white' : 'black'},
+                  ]}>
                   File Name: {singleFile[0].name ? singleFile[0].name : ''}
                   {'\n'}
                   Type: {singleFile[0].type ? singleFile[0].type : ''}
@@ -222,23 +241,26 @@ const App = () => {
                   {'\n'}
                 </Text>
                 <Button
-                  style={{ margin: 10 }}
+                  style={{margin: 10}}
                   title="Preview"
-                  onPress={() => filePreview(singleFile[0].uri)} />
-              </> : null}
+                  onPress={() => filePreview(singleFile[0].uri)}
+                />
+              </>
+            ) : null}
             <View
               style={{
                 backgroundColor: 'grey',
                 height: 2,
-                margin: 10
-              }} />
+                margin: 10,
+              }}
+            />
             {/*To multiple single file attribute*/}
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.buttonStyle}
               onPress={selectMultipleFile}>
               {/*Multiple files selection button*/}
-              <Text style={{ margin: 10, fontSize: 19 }}>
+              <Text style={{margin: 10, fontSize: 19}}>
                 Click here to pick multiple files
               </Text>
               <Image
@@ -252,7 +274,11 @@ const App = () => {
               {/*Showing the data of selected Multiple files*/}
               {multipleFile.map((item, key) => (
                 <View key={key}>
-                  <Text style={[styles.textStyle, { color: isDarkMode ? 'white' : 'black' }]}>
+                  <Text
+                    style={[
+                      styles.textStyle,
+                      {color: isDarkMode ? 'white' : 'black'},
+                    ]}>
                     File Name: {item.name ? item.name : ''}
                     {'\n'}
                     Type: {item.type ? item.type : ''}
