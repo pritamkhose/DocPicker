@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 // Import React and required components
 import React, {useState} from 'react';
 import {
@@ -20,6 +21,9 @@ import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import RNImageToPdf from 'react-native-image-to-pdf';
+import ImagePicker from 'react-native-image-crop-picker';
+// https://www.npmjs.com/package/react-native-permissions
+import {requestMultiple, PERMISSIONS} from 'react-native-permissions';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -56,10 +60,10 @@ const App = () => {
       //Handling any exception (If any)
       if (DocumentPicker.isCancel(err)) {
         //If user canceled the document selection
-        alert('Canceled from single doc picker');
+        Alert.alert('Canceled from single doc picker');
       } else {
         //For Unknown Error
-        alert('Unknown Error: ' + JSON.stringify(err));
+        Alert.alert('Unknown Error: ' + JSON.stringify(err));
         throw err;
       }
     }
@@ -86,10 +90,10 @@ const App = () => {
       //Handling any exception (If any)
       if (DocumentPicker.isCancel(err)) {
         //If user canceled the document selection
-        alert('Canceled from multiple doc picker');
+        Alert.alert('Canceled from multiple doc picker');
       } else {
         //For Unknown Error
-        alert('Unknown Error: ' + JSON.stringify(err));
+        Alert.alert('Unknown Error: ' + JSON.stringify(err));
         throw err;
       }
     }
@@ -114,10 +118,47 @@ const App = () => {
         console.log('You can use the storage');
         setPermission(true);
       } else {
-        console.log('Camera permission denied');
+        Alert.alert('Camera storage denied.');
       }
     } catch (err) {
       console.warn(err);
+      Alert.alert('Opps, Something went wrong! for storage Permission');
+    }
+  };
+
+  const requestAllPermission = async () => {
+    try {
+      requestMultiple([
+        PERMISSIONS.ANDROID.CAMERA,
+        PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+        PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+        PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ]).then(statuses => {
+        console.log('Camera', statuses[PERMISSIONS.ANDROID.CAMERA]);
+        console.log(
+          'Read storage',
+          statuses[PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE],
+        );
+        console.log(
+          'Write storage',
+          statuses[PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+        );
+        console.log(
+          'FINE LOCATION',
+          statuses[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION],
+        );
+        console.log(
+          'COARSE LOCATION',
+          statuses[PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION],
+        );
+        if (statuses[PERMISSIONS.ANDROID.CAMERA] === 'denied') {
+          requestAllPermission();
+        }
+      });
+    } catch (err) {
+      console.warn(err);
+      Alert.alert('Opps, Something went wrong! for All Permission');
     }
   };
 
@@ -207,6 +248,21 @@ const App = () => {
     }
   };
 
+  const openCameraPicker = async () => {
+    try {
+      ImagePicker.openCamera({
+        width: 300,
+        height: 400,
+        cropping: true,
+      }).then(image => {
+        console.log(image);
+      });
+    } catch (e) {
+      console.log(e);
+      Alert.alert('Opps, Something went wrong with Camera!');
+    }
+  };
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
@@ -217,8 +273,8 @@ const App = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Text style={styles.sectionTitle}>File Picker in React Native</Text>
-
+          <Text style={styles.sectionTitle}>File Handling in React Native</Text>
+          {/*
           <TouchableOpacity
             activeOpacity={0.5}
             onPress={() =>
@@ -239,26 +295,22 @@ const App = () => {
             <Text style={styles.titleText}>
               https://stackoverflow.com/questions/34908009/react-native-convert-image-url-to-base64-string
             </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              backgroundColor: 'grey',
-              height: 2,
-              margin: 10,
-            }}
-          />
-          <Button
-            style={{margin: 10}}
-            title="request permissions"
-            onPress={requestStoragePermission}
-          />
-          <View
-            style={{
-              backgroundColor: 'grey',
-              height: 2,
-              margin: 10,
-            }}
-          />
+          </TouchableOpacity> */}
+          <View style={styles.greyline} />
+          <View style={styles.container}>
+            <Button
+              style={styles.margin10}
+              title="Request Storage Permission"
+              onPress={requestStoragePermission}
+            />
+            <View style={styles.greyline} />
+            <Button
+              style={styles.margin10}
+              title="Request All Permission"
+              onPress={requestAllPermission}
+            />
+          </View>
+          <View style={styles.greyline} />
           <View style={styles.container}>
             {/*To show single file attribute*/}
             <TouchableOpacity
@@ -266,9 +318,7 @@ const App = () => {
               style={styles.buttonStyle}
               onPress={selectOneFile}>
               {/*Single file selection button*/}
-              <Text style={{margin: 10, fontSize: 19}}>
-                Click here to pick one file
-              </Text>
+              <Text style={styles.btnFont}>Click here to pick one file</Text>
               <Image
                 source={{
                   uri: 'https://img.icons8.com/offices/40/000000/attach.png',
@@ -294,26 +344,20 @@ const App = () => {
                   {'\n'}
                 </Text>
                 <Button
-                  style={{margin: 10}}
+                  style={styles.margin10}
                   title="Preview"
                   onPress={() => filePreview(singleFile[0].uri)}
                 />
               </>
             ) : null}
-            <View
-              style={{
-                backgroundColor: 'grey',
-                height: 2,
-                margin: 10,
-              }}
-            />
+            <View style={styles.greyline} />
             {/*To multiple single file attribute*/}
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.buttonStyle}
               onPress={selectMultipleFile}>
               {/*Multiple files selection button*/}
-              <Text style={{margin: 10, fontSize: 19}}>
+              <Text style={styles.btnFont}>
                 Click here to pick multiple files
               </Text>
               <Image
@@ -344,21 +388,21 @@ const App = () => {
                 </View>
               ))}
             </ScrollView>
-            <View
-              style={{
-                backgroundColor: 'grey',
-                height: 2,
-                margin: 10,
-              }}
-            />
+            <View style={styles.greyline} />
             {/*Convert to pdf*/}
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.buttonStyle}
               onPress={myAsyncPDFFunction}>
-              <Text style={{margin: 10, fontSize: 19}}>
-                Convert image to PDF
-              </Text>
+              <Text style={styles.btnFont}>Convert image to PDF</Text>
+            </TouchableOpacity>
+            <View style={styles.greyline} />
+            {/*Capture images and save to cache folder*/}
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.buttonStyle}
+              onPress={openCameraPicker}>
+              <Text style={styles.btnFont}>Capture image</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -396,7 +440,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   textStyle: {
-    // backgroundColor: '#fff',
     fontSize: 15,
     marginTop: 16,
   },
@@ -410,6 +453,19 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     resizeMode: 'stretch',
+  },
+  greyline: {
+    backgroundColor: 'grey',
+    height: 2,
+    margin: 10,
+  },
+  margin10: {
+    margin: 10,
+    padding: 10,
+  },
+  btnFont: {
+    margin: 10,
+    fontSize: 20,
   },
 });
 
