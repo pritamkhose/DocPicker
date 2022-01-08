@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {
   Alert,
   Button,
+  FlatList,
   Image,
   Linking,
   PermissionsAndroid,
@@ -19,18 +20,20 @@ import {
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import RNImageToPdf from 'react-native-image-to-pdf';
 import ImagePicker from 'react-native-image-crop-picker';
-// https://www.npmjs.com/package/react-native-permissions
-import {requestMultiple, PERMISSIONS} from 'react-native-permissions';
+import RNImageToPdf from 'react-native-image-to-pdf';
+import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import FastImage from 'react-native-fast-image';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const [singleFile, setSingleFile] = useState('');
   const [multipleFile, setMultipleFile] = useState([]);
+  const [gallaryImages, setGallaryImages] = useState([]);
   const [isPermission, setPermission] = useState(false);
+  const [imagePreview, setImagePreview] = useState('');
 
   const selectOneFile = async () => {
     //Opening Document Picker for selection of one file
@@ -126,6 +129,7 @@ const App = () => {
     }
   };
 
+  // https://www.npmjs.com/package/react-native-permissions
   const requestAllPermission = async () => {
     try {
       requestMultiple([
@@ -191,26 +195,6 @@ const App = () => {
 
   const myAsyncPDFFunction = async () => {
     try {
-      // var p = 'file://' + RNFS.DocumentDirectoryPath;
-      // // https://stackoverflow.com/questions/47197227/how-to-access-files-and-folders-using-react-native-fs-library
-      /* RNFS.readDir(RNFS.DownloadDirectoryPath + '')
-        .then(result => {
-          console.log('GOT RESULT', result);
-          return Promise.all([RNFS.stat(result[0].path), result[0].path]);
-        })
-        .then(statResult => {
-          if (statResult[0].isFile()) {
-            return RNFS.readFile(statResult[1], 'utf8');
-          }
-          return 'no file';
-        })
-        .then(contents => {
-          console.log(contents);
-        })
-        .catch(err => {
-          console.log(err.message, err.code);
-        });
-      console.log('>>', multipleFile); */
       var pathImgs = [];
       multipleFile.map((item, index) => {
         if (item?.type.includes('image')) {
@@ -261,6 +245,72 @@ const App = () => {
       console.log(e);
       Alert.alert('Opps, Something went wrong with Camera!');
     }
+  };
+
+  const showCameraImages = async () => {
+    try {
+      // https://stackoverflow.com/questions/47197227/how-to-access-files-and-folders-using-react-native-fs-library
+      /* RNFS.readDir(RNFS.DownloadDirectoryPath + '')
+        .then(result => {
+          console.log('GOT RESULT', result);
+          return Promise.all([RNFS.stat(result[0].path), result[0].path]);
+        })
+        .then(statResult => {
+          if (statResult[0].isFile()) {
+            return RNFS.readFile(statResult[1], 'utf8');
+          }
+          return 'no file';
+        })
+        .then(contents => {
+          console.log(contents);
+        })
+        .catch(err => {
+          console.log(err.message, err.code);
+        });*/
+      // https://github.com/itinance/react-native-fs
+      setGallaryImages([]);
+      RNFS.readDir(
+        '/storage/emulated/0/Android/data/com.docpicker/files/Pictures/',
+      )
+        .then(result => {
+          // return Promise.all([RNFS.stat(result[0].path), result[0].path]);
+          return Promise.all(result);
+        })
+        .then(contents => {
+          var pathImgs = [];
+          var pathImgsStr = [];
+          contents.map((item, index) => {
+            if (item?.path.includes('.jpg')) {
+              pathImgs.push(item?.path);
+              pathImgsStr.push(getFileImage(item?.path));
+            }
+          });
+          console.log(
+            'Camera Caches pathImgs >> ',
+            pathImgsStr.length,
+            pathImgsStr.length,
+          );
+          setGallaryImages(pathImgsStr);
+          getFileImagePreview(pathImgs[0]);
+        })
+        .catch(err => {
+          console.log(err.message, err.code);
+        });
+    } catch (e) {
+      console.log(e);
+      Alert.alert('Opps, Something went wrong with Gallary!');
+    }
+  };
+
+  // https://stackoverflow.com/questions/64097351/react-native-image-uri-is-not-showing?noredirect=1&lq=1
+  const getFileImage = async uri => {
+    return 'data:image/jpg;base64,' + (await RNFS.readFile(uri, 'base64'));
+  };
+
+  const getFileImagePreview = async uri => {
+    const imgStr =
+      'data:image/jpg;base64,' + (await RNFS.readFile(uri, 'base64'));
+    setImagePreview(imgStr);
   };
 
   return (
@@ -404,6 +454,54 @@ const App = () => {
               onPress={openCameraPicker}>
               <Text style={styles.btnFont}>Capture image</Text>
             </TouchableOpacity>
+            <View style={styles.greyline} />
+            {/*Shows Capture images from cache folder*/}
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.buttonStyle}
+              onPress={showCameraImages}>
+              <Text style={styles.btnFont}>See Capture image</Text>
+            </TouchableOpacity>
+            {imagePreview?.length > 0 ? (
+              // <Image
+              //   source={{
+              //     uri: imagePreview, // uri: 'https://img.icons8.com/offices/40/000000/attach.png',
+              //   }}
+              //   style={styles.imageGallaryStyle}
+              // />
+              <FastImage
+                style={styles.imageGallaryStyle}
+                source={{
+                  uri: imagePreview,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+            ) : null}
+            {gallaryImages?.length > 0 ? (
+              <FlatList
+                data={gallaryImages}
+                renderItem={({item}) => (
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'column',
+                      margin: 1,
+                    }}>
+                    <Image
+                      style={styles.imageThumbnail}
+                      source={{uri: imagePreview}}
+                    />
+                  </View>
+                )}
+                //Setting the number of column
+                numColumns={3}
+                keyExtractor={(item, index) => index}
+              />
+            ) : (
+              <Text style={styles.btnFont}>No images Found</Text>
+            )}
+            <View style={styles.greyline} />
           </View>
         </View>
       </ScrollView>
@@ -452,6 +550,17 @@ const styles = StyleSheet.create({
   imageIconStyle: {
     height: 20,
     width: 20,
+    resizeMode: 'stretch',
+  },
+  imageGallaryStyle: {
+    height: 300,
+    width: '100%',
+    resizeMode: 'stretch',
+  },
+  imageThumbnail: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
     resizeMode: 'stretch',
   },
   greyline: {
