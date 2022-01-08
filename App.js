@@ -152,7 +152,7 @@ const App = () => {
     try {
       // var p = 'file://' + RNFS.DocumentDirectoryPath;
       // // https://stackoverflow.com/questions/47197227/how-to-access-files-and-folders-using-react-native-fs-library
-      RNFS.readDir(RNFS.DownloadDirectoryPath + '')
+      /* RNFS.readDir(RNFS.DownloadDirectoryPath + '')
         .then(result => {
           console.log('GOT RESULT', result);
           return Promise.all([RNFS.stat(result[0].path), result[0].path]);
@@ -169,28 +169,41 @@ const App = () => {
         .catch(err => {
           console.log(err.message, err.code);
         });
-      const options = {
-        imagePaths: [
-          '/storage/emulated/0/Download/f1.png',
-          '/storage/emulated/0/Download/f2.png',
-          '/storage/emulated/0/Download/f3.png',
-          '/storage/emulated/0/Download/f4.png',
-        ],
-        name: 'PDFName.pdf',
-        maxSize: {
-          // optional maximum image dimension - larger images will be resized
-          width: 900,
-          // height: Math.round((deviceHeight() / deviceWidth()) * 900),
-          height: 1200,
-        },
-        quality: 0.7, // optional compression paramter
-      };
-      console.log('>>>', options);
-      const pdf = await RNImageToPdf.createPDFbyImages(options);
-
-      console.log(pdf.filePath);
+      console.log('>>', multipleFile); */
+      var pathImgs = [];
+      multipleFile.map((item, index) => {
+        if (item?.type.includes('image')) {
+          var patharr = item?.uri.split('/');
+          patharr = patharr[patharr.length - 1];
+          patharr = patharr.replace('raw%3A', '').replace(/%2F/gi, '/');
+          pathImgs.push(patharr);
+        }
+      });
+      if (pathImgs?.length > 0) {
+        const options = {
+          imagePaths: pathImgs,
+          // imagePaths: [
+          //   '/storage/emulated/0/Download/f1.png',
+          //   '/storage/emulated/0/Download/f2.png',
+          // ],
+          name: 'PDFName.pdf',
+          maxSize: {
+            // optional maximum image dimension - larger images will be resized
+            width: 1600,
+            // height: Math.round((deviceHeight() / deviceWidth()) * 900),
+            height: 2400,
+          },
+          quality: 0.7, // optional compression paramter
+        };
+        console.log('pdf option >>>', options);
+        const pdf = await RNImageToPdf.createPDFbyImages(options);
+        console.log(pdf.filePath);
+      } else {
+        Alert.alert('No Files selected in pick mutiple files');
+      }
     } catch (e) {
       console.log(e);
+      Alert.alert('Opps, Something went wrong!');
     }
   };
 
