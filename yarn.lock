@@ -2491,6 +2491,13 @@ eslint-config-prettier@^6.10.1:
   dependencies:
     get-stdin "^6.0.0"
 
+eslint-detailed-reporter@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/eslint-detailed-reporter/-/eslint-detailed-reporter-0.8.0.tgz#bc935f8f82224e5df022c08dd0a4e96e410d1c0a"
+  integrity sha512-u/LAPwSQ8udUiWXJ2aYZfvV4gd7uhS77ZctOv8FZ8SDxzEG5aV18dgOTMilT8uEHBJyv3MpGHoQH7A3tXOfm/Q==
+  dependencies:
+    lodash "^4.17.11"
+
 eslint-html-reporter@^0.7.4:
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/eslint-html-reporter/-/eslint-html-reporter-0.7.4.tgz#5c7cb7a0c289a33c7f04191e526b723d80a6ce9f"
@@ -4224,7 +4231,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.7.0:
+lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

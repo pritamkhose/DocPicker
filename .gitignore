@@ -61,3 +61,4 @@ buck-out/
 
 # report
 eslint_report.html
+details_report.html
